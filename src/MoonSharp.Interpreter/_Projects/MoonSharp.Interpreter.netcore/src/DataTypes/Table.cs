@@ -57,7 +57,7 @@ namespace MoonSharp.Interpreter
 		/// <summary>
 		/// Removes all items from the Table.
 		/// </summary>
-		public void Clear()
+		public virtual void Clear()
 		{
 			m_Values.Clear();
 			m_StringMap.Clear();
@@ -89,7 +89,7 @@ namespace MoonSharp.Interpreter
 		/// The <see cref="System.Object" />.
 		/// </value>
 		/// <param name="keys">The keys to access the table and subtables</param>
-		public object this[params object[] keys]
+		public virtual object this[params object[] keys]
 		{
 			get
 			{
@@ -110,7 +110,7 @@ namespace MoonSharp.Interpreter
 		/// </value>
 		/// <param name="key">The key.</param>
 		/// <returns></returns>
-		public object this[object key]
+		public virtual object this[object key]
 		{
 			get
 			{
@@ -151,7 +151,7 @@ namespace MoonSharp.Interpreter
 		/// Append the value to the table using the next available integer index.
 		/// </summary>
 		/// <param name="value">The value.</param>
-		public void Append(DynValue value)
+		public virtual void Append(DynValue value)
 		{
 			this.CheckScriptOwnership(value);
 			PerformTableSet(m_ArrayMap, Length + 1, DynValue.NewNumber(Length + 1), value, true, Length + 1);
@@ -207,7 +207,7 @@ namespace MoonSharp.Interpreter
 		/// </summary>
 		/// <param name="key">The key.</param>
 		/// <param name="value">The value.</param>
-		public void Set(string key, DynValue value)
+		public virtual void Set(string key, DynValue value)
 		{
 			if (key == null)
 				throw ScriptRuntimeException.TableIndexIsNil();
@@ -221,7 +221,7 @@ namespace MoonSharp.Interpreter
 		/// </summary>
 		/// <param name="key">The key.</param>
 		/// <param name="value">The value.</param>
-		public void Set(int key, DynValue value)
+		public virtual void Set(int key, DynValue value)
 		{
 			this.CheckScriptOwnership(value);
 			PerformTableSet(m_ArrayMap, key, DynValue.NewNumber(key), value, true, -1);
@@ -232,7 +232,7 @@ namespace MoonSharp.Interpreter
 		/// </summary>
 		/// <param name="key">The key.</param>
 		/// <param name="value">The value.</param>
-		public void Set(DynValue key, DynValue value)
+		public virtual void Set(DynValue key, DynValue value)
 		{
 			if (key.IsNilOrNan())
 			{
@@ -270,7 +270,7 @@ namespace MoonSharp.Interpreter
 		/// </summary>
 		/// <param name="key">The key.</param>
 		/// <param name="value">The value.</param>
-		public void Set(object key, DynValue value)
+		public virtual void Set(object key, DynValue value)
 		{
 			if (key == null)
 				throw ScriptRuntimeException.TableIndexIsNil();
@@ -289,7 +289,7 @@ namespace MoonSharp.Interpreter
 		/// </summary>
 		/// <param name="key">The keys.</param>
 		/// <param name="value">The value.</param>
-		public void Set(object[] keys, DynValue value)
+		public virtual void Set(object[] keys, DynValue value)
 		{
 			if (keys == null || keys.Length <= 0)
 				throw ScriptRuntimeException.TableIndexIsNil();
@@ -306,7 +306,7 @@ namespace MoonSharp.Interpreter
 		/// Gets the value associated with the specified key.
 		/// </summary>
 		/// <param name="key">The key.</param>
-		public DynValue Get(string key)
+		public virtual DynValue Get(string key)
 		{
 			//Contract.Ensures(Contract.Result<DynValue>() != null);
 			return RawGet(key) ?? DynValue.Nil;
@@ -316,7 +316,7 @@ namespace MoonSharp.Interpreter
 		/// Gets the value associated with the specified key.
 		/// </summary>
 		/// <param name="key">The key.</param>
-		public DynValue Get(int key)
+		public virtual DynValue Get(int key)
 		{
 			//Contract.Ensures(Contract.Result<DynValue>() != null);
 			return RawGet(key) ?? DynValue.Nil;
@@ -326,31 +326,31 @@ namespace MoonSharp.Interpreter
 		/// Gets the value associated with the specified key.
 		/// </summary>
 		/// <param name="key">The key.</param>
-		public DynValue Get(DynValue key)
+		public virtual DynValue Get(DynValue key)
 		{
 			//Contract.Ensures(Contract.Result<DynValue>() != null);
 			return RawGet(key) ?? DynValue.Nil;
 		}
 
-		/// <summary>
-		/// Gets the value associated with the specified key.
-		/// (expressed as a <see cref="System.Object"/>).
-		/// </summary>
-		/// <param name="key">The key.</param>
-		public DynValue Get(object key)
+        /// <summary>
+        /// Gets the value associated with the specified key.
+        /// (expressed as a <see cref="System.Object"/>).
+        /// </summary>
+        /// <param name="key">The key.</param>
+        public virtual DynValue Get(object key)
 		{
 			//Contract.Ensures(Contract.Result<DynValue>() != null);
 			return RawGet(key) ?? DynValue.Nil;
 		}
 
-		/// <summary>
-		/// Gets the value associated with the specified keys (expressed as an 
-		/// array of <see cref="System.Object"/>).
-		/// This will marshall CLR and MoonSharp objects in the best possible way.
-		/// Multiple keys can be used to access subtables.
-		/// </summary>
-		/// <param name="keys">The keys to access the table and subtables</param>
-		public DynValue Get(params object[] keys)
+        /// <summary>
+        /// Gets the value associated with the specified keys (expressed as an 
+        /// array of <see cref="System.Object"/>).
+        /// This will marshall CLR and MoonSharp objects in the best possible way.
+        /// Multiple keys can be used to access subtables.
+        /// </summary>
+        /// <param name="keys">The keys to access the table and subtables</param>
+        public virtual DynValue Get(params object[] keys)
 		{
 			//Contract.Ensures(Contract.Result<DynValue>() != null);
 			return RawGet(keys) ?? DynValue.Nil;
@@ -365,32 +365,32 @@ namespace MoonSharp.Interpreter
 			return (linkedListNode != null) ? linkedListNode.Value.Value : null;
 		}
 
-		/// <summary>
-		/// Gets the value associated with the specified key,
-		/// without bringing to Nil the non-existant values.
-		/// </summary>
-		/// <param name="key">The key.</param>
-		public DynValue RawGet(string key)
+        /// <summary>
+        /// Gets the value associated with the specified key,
+        /// without bringing to Nil the non-existant values.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        public virtual DynValue RawGet(string key)
 		{
 			return RawGetValue(m_StringMap.Find(key));
 		}
 
-		/// <summary>
-		/// Gets the value associated with the specified key,
-		/// without bringing to Nil the non-existant values.
-		/// </summary>
-		/// <param name="key">The key.</param>
-		public DynValue RawGet(int key)
+        /// <summary>
+        /// Gets the value associated with the specified key,
+        /// without bringing to Nil the non-existant values.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        public virtual DynValue RawGet(int key)
 		{
 			return RawGetValue(m_ArrayMap.Find(key));
 		}
 
-		/// <summary>
-		/// Gets the value associated with the specified key,
-		/// without bringing to Nil the non-existant values.
-		/// </summary>
-		/// <param name="key">The key.</param>
-		public DynValue RawGet(DynValue key)
+        /// <summary>
+        /// Gets the value associated with the specified key,
+        /// without bringing to Nil the non-existant values.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        public virtual DynValue RawGet(DynValue key)
 		{
 			if (key.Type == DataType.String)
 				return RawGet(key.String);
@@ -405,12 +405,12 @@ namespace MoonSharp.Interpreter
 			return RawGetValue(m_ValueMap.Find(key));
 		}
 
-		/// <summary>
-		/// Gets the value associated with the specified key,
-		/// without bringing to Nil the non-existant values.
-		/// </summary>
-		/// <param name="key">The key.</param>
-		public DynValue RawGet(object key)
+        /// <summary>
+        /// Gets the value associated with the specified key,
+        /// without bringing to Nil the non-existant values.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        public virtual DynValue RawGet(object key)
 		{
 			if (key == null)
 				return null;
@@ -424,14 +424,14 @@ namespace MoonSharp.Interpreter
 			return RawGet(DynValue.FromObject(OwnerScript, key));
 		}
 
-		/// <summary>
-		/// Gets the value associated with the specified keys (expressed as an
-		/// array of <see cref="System.Object"/>).
-		/// This will marshall CLR and MoonSharp objects in the best possible way.
-		/// Multiple keys can be used to access subtables.
-		/// </summary>
-		/// <param name="keys">The keys to access the table and subtables</param>
-		public DynValue RawGet(params object[] keys)
+        /// <summary>
+        /// Gets the value associated with the specified keys (expressed as an
+        /// array of <see cref="System.Object"/>).
+        /// This will marshall CLR and MoonSharp objects in the best possible way.
+        /// Multiple keys can be used to access subtables.
+        /// </summary>
+        /// <param name="keys">The keys to access the table and subtables</param>
+        public virtual DynValue RawGet(params object[] keys)
 		{
 			if (keys == null || keys.Length <= 0)
 				return null;
@@ -456,32 +456,32 @@ namespace MoonSharp.Interpreter
 			return removed;
 		}
 
-		/// <summary>
-		/// Remove the value associated with the specified key from the table.
-		/// </summary>
-		/// <param name="key">The key.</param>
-		/// <returns><c>true</c> if values was successfully removed; otherwise, <c>false</c>.</returns>
-		public bool Remove(string key)
+        /// <summary>
+        /// Remove the value associated with the specified key from the table.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns><c>true</c> if values was successfully removed; otherwise, <c>false</c>.</returns>
+        public virtual bool Remove(string key)
 		{
 			return PerformTableRemove(m_StringMap, key, false);
 		}
 
-		/// <summary>
-		/// Remove the value associated with the specified key from the table.
-		/// </summary>
-		/// <param name="key">The key.</param>
-		/// <returns><c>true</c> if values was successfully removed; otherwise, <c>false</c>.</returns>
-		public bool Remove(int key)
+        /// <summary>
+        /// Remove the value associated with the specified key from the table.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns><c>true</c> if values was successfully removed; otherwise, <c>false</c>.</returns>
+        public virtual bool Remove(int key)
 		{
 			return PerformTableRemove(m_ArrayMap, key, true);
 		}
 
-		/// <summary>
-		/// Remove the value associated with the specified key from the table.
-		/// </summary>
-		/// <param name="key">The key.</param>
-		/// <returns><c>true</c> if values was successfully removed; otherwise, <c>false</c>.</returns>
-		public bool Remove(DynValue key)
+        /// <summary>
+        /// Remove the value associated with the specified key from the table.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns><c>true</c> if values was successfully removed; otherwise, <c>false</c>.</returns>
+        public virtual bool Remove(DynValue key)
 		{
 			if (key.Type == DataType.String)
 				return Remove(key.String);
@@ -496,12 +496,12 @@ namespace MoonSharp.Interpreter
 			return PerformTableRemove(m_ValueMap, key, false);
 		}
 
-		/// <summary>
-		/// Remove the value associated with the specified key from the table.
-		/// </summary>
-		/// <param name="key">The key.</param>
-		/// <returns><c>true</c> if values was successfully removed; otherwise, <c>false</c>.</returns>
-		public bool Remove(object key)
+        /// <summary>
+        /// Remove the value associated with the specified key from the table.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns><c>true</c> if values was successfully removed; otherwise, <c>false</c>.</returns>
+        public virtual bool Remove(object key)
 		{
 			if (key is string)
 				return Remove((string)key);
@@ -512,13 +512,13 @@ namespace MoonSharp.Interpreter
 			return Remove(DynValue.FromObject(OwnerScript, key));
 		}
 
-		/// <summary>
-		/// Remove the value associated with the specified keys from the table.
-		/// Multiple keys can be used to access subtables.
-		/// </summary>
-		/// <param name="key">The key.</param>
-		/// <returns><c>true</c> if values was successfully removed; otherwise, <c>false</c>.</returns>
-		public bool Remove(params object[] keys)
+        /// <summary>
+        /// Remove the value associated with the specified keys from the table.
+        /// Multiple keys can be used to access subtables.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns><c>true</c> if values was successfully removed; otherwise, <c>false</c>.</returns>
+        public virtual bool Remove(params object[] keys)
 		{
 			if (keys == null || keys.Length <= 0)
 				return false;
@@ -527,14 +527,14 @@ namespace MoonSharp.Interpreter
 			return ResolveMultipleKeys(keys, out key).Remove(key);
 		}
 
-		#endregion
+        #endregion
 
-		/// <summary>
-		/// Collects the dead keys. This frees up memory but invalidates pending iterators.
-		/// It's called automatically internally when the semantics of Lua tables allow, but can be forced
-		/// externally if it's known that no iterators are pending.
-		/// </summary>
-		public void CollectDeadKeys()
+        /// <summary>
+        /// Collects the dead keys. This frees up memory but invalidates pending iterators.
+        /// It's called automatically internally when the semantics of Lua tables allow, but can be forced
+        /// externally if it's known that no iterators are pending.
+        /// </summary>
+        public virtual void CollectDeadKeys()
 		{
 			for (LinkedListNode<TablePair> node = m_Values.First; node != null; node = node.Next)
 			{
@@ -549,10 +549,10 @@ namespace MoonSharp.Interpreter
 		}
 
 
-		/// <summary>
-		/// Returns the next pair from a value
-		/// </summary>
-		public TablePair? NextKey(DynValue v)
+        /// <summary>
+        /// Returns the next pair from a value
+        /// </summary>
+        public virtual TablePair? NextKey(DynValue v)
 		{
 			if (v.IsNil())
 			{
@@ -605,10 +605,10 @@ namespace MoonSharp.Interpreter
 		}
 
 
-		/// <summary>
-		/// Gets the length of the "array part".
-		/// </summary>
-		public int Length
+        /// <summary>
+        /// Gets the length of the "array part".
+        /// </summary>
+        public virtual int Length
 		{
 			get
 			{
@@ -624,7 +624,7 @@ namespace MoonSharp.Interpreter
 			}
 		}
 
-		internal void InitNextArrayKeys(DynValue val, bool lastpos)
+		public virtual void InitNextArrayKeys(DynValue val, bool lastpos)
 		{
 			if (val.Type == DataType.Tuple && lastpos)
 			{
@@ -637,10 +637,10 @@ namespace MoonSharp.Interpreter
 			}
 		}
 
-		/// <summary>
-		/// Gets the meta-table associated with this instance.
-		/// </summary>
-		public Table MetaTable
+        /// <summary>
+        /// Gets the meta-table associated with this instance.
+        /// </summary>
+        public virtual Table MetaTable
 		{
 			get { return m_MetaTable; }
 			set { this.CheckScriptOwnership(m_MetaTable); m_MetaTable = value; }
@@ -653,7 +653,7 @@ namespace MoonSharp.Interpreter
 		/// Enumerates the key/value pairs.
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<TablePair> Pairs
+		public virtual IEnumerable<TablePair> Pairs
 		{
 			get
 			{
@@ -665,7 +665,7 @@ namespace MoonSharp.Interpreter
 		/// Enumerates the keys.
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<DynValue> Keys
+		public virtual IEnumerable<DynValue> Keys
 		{
 			get
 			{
@@ -677,7 +677,7 @@ namespace MoonSharp.Interpreter
 		/// Enumerates the values
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<DynValue> Values
+		public virtual IEnumerable<DynValue> Values
 		{
 			get
 			{
