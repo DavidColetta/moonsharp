@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using MoonSharp.Interpreter.CoreLib;
 using MoonSharp.Interpreter.Debugging;
@@ -106,7 +107,6 @@ namespace MoonSharp.Interpreter
 		public Table Globals
 		{
 			get { return m_GlobalTable; }
-			set { m_GlobalTable = value; }
 		}
 
 		/// <summary>
@@ -180,7 +180,7 @@ namespace MoonSharp.Interpreter
 
 			m_Sources.Add(source);
 
-			int address = Loader_Fast.LoadChunk(this,
+			address = Loader_Fast.LoadChunk(this,
 				source,
 				m_ByteCode);
 
@@ -189,6 +189,16 @@ namespace MoonSharp.Interpreter
 
 			return MakeClosure(address, globalTable ?? m_GlobalTable);
 		}
+		private int address = -1;
+
+		public DynValue ReloadString(Table globalTable = null)
+		{
+			if (address == -1)
+			{
+				throw new InvalidOperationException("Cannot reload, script has never been loaded");
+			}
+            return MakeClosure(address, globalTable ?? m_GlobalTable);
+        }
 
 		/// <summary>
 		/// Loads a Lua/MoonSharp script from a System.IO.Stream. NOTE: This will *NOT* close the stream!
@@ -224,7 +234,7 @@ namespace MoonSharp.Interpreter
 				m_Sources.Add(source);
 
 				bool hasUpvalues;
-				int address = m_MainProcessor.Undump(codeStream, m_Sources.Count - 1, globalTable ?? m_GlobalTable, out hasUpvalues);
+				address = m_MainProcessor.Undump(codeStream, m_Sources.Count - 1, globalTable ?? m_GlobalTable, out hasUpvalues);
 
 				SignalSourceCodeChange(source);
 				SignalByteCodeChange();
