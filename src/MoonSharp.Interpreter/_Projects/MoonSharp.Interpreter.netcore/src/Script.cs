@@ -106,6 +106,7 @@ namespace MoonSharp.Interpreter
 		public Table Globals
 		{
 			get { return m_GlobalTable; }
+			set { m_GlobalTable = value; }
 		}
 
 		/// <summary>
