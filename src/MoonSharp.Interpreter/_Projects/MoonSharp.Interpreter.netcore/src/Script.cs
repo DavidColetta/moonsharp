@@ -106,8 +106,22 @@ namespace MoonSharp.Interpreter
 		public Table Globals
 		{
 			get { return m_GlobalTable; }
-			set { m_GlobalTable = value; }
 		}
+
+		/// <summary>
+		/// Address of previously loaded thing
+		/// </summary>
+		int address;
+
+		/// <summary>
+		/// Loads the previously loaded thing again, with a different globalTable.
+		/// </summary>
+		/// <param name="globalTable"></param> The global table for the created closure. If null, will use the scripts global table.
+		/// <returns></returns>
+		public DynValue Reload(Table globalTable)
+		{
+            return MakeClosure(address, globalTable ?? m_GlobalTable);
+        }
 
 		/// <summary>
 		/// Loads a string containing a Lua/MoonSharp function.
